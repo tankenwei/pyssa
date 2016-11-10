@@ -1,6 +1,5 @@
 # pyssa
-paulbuenau's SSA-Toolbox (written in Java), ported into Python
-Original repository can be found at https://github.com/paulbuenau/SSA-Toolbox.
+paulbuenau's SSA-Toolbox (written in Java), ported into Python. Original repository can be found at https://github.com/paulbuenau/SSA-Toolbox.
 
 Libraries required: NumPy, SciPy
 
