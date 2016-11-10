@@ -72,9 +72,9 @@ def optimize_once(data, params, optNSources, loss_translation = 0, init = None):
     sigmas = [B.dot(sigma).dot(B.T) for sigma in sigmas]
     number_of_epochs = len(data['epoch_sizes'])
     if optNSources:
-        k = number_of_epochs * params['dimensions_noisy'] * (params['dimensions_noisy'] + 3) / 2
+        k = number_of_epochs * params['dimensions_noisy'] * (params['dimensions_noisy'] + 3) / 2.
     else:
-        k = number_of_epochs * params['dimensions_stationary'] * (params['dimensions_stationary'] + 3) / 2
+        k = number_of_epochs * params['dimensions_stationary'] * (params['dimensions_stationary'] + 3) / 2.
     maxiter = 10
     for i in range(maxiter):
         loss, grad, _, _, _ = objective_function(params,mus,sigmas,data['epoch_sizes'],None,k,loss_translation = loss_translation)
@@ -126,7 +126,7 @@ def optimize(data, dim_s, restarts = 10, optNSources = False, loss_translation =
     if init is not None and restarts > 1:
         print("A custom initialization matrix has been supplied; the optimizer need only be run once")
         restarts = 1
-    params = {}
+    params = {'dimensions_stationary':dim_s}
     params['dimensions_total'] = len(data['mus_initial'][0])
     params['dimensions_noisy'] = params['dimensions_total'] - params['dimensions_stationary']
     #params['number_of_epochs'] = len(params['epochs'])
@@ -189,3 +189,36 @@ def gen_toy_data(toy_data_params):
     mixer = random_rotation(dim_total)
     toy_data_mixed = toy_data.dot(mixer.T) # "Left" multiplication; actually vstacked mixer.dot(DATA[i])
     return toy_data_mixed, mixer
+
+def process_data(data_raw, epochs):
+    """
+    Processes the data, to be used as input for the optimizer.
+    
+    Arguments
+    ---------
+        data_raw: An numpy array of observations (rows are observations, columns are sources)
+        epochs  : Either an iterable of epoch sizes, or
+                         an integer specifying the number of epochs (i.e. epochs are assumed to be equally sized)
+                         
+    returns a dictionary of:
+        mus_initial   : A list of means of each epoch
+        sigmas_initial: A list of covariance matrices of each epoch
+        epoch_sizes   : A list of the epoch sizes
+    """
+    data = {}
+    if hasattr(epochs, '__iter__'):
+        data['epoch_sizes'] = epochs
+    elif type(epochs) == int:
+        data['epoch_sizes'] = [int(len(data_raw) / epochs)] * epochs
+        remainder = len(data_raw) % epochs
+        for i in range(remainder):
+            data['epoch_sizes'][int(i*epochs/remainder)] += 1
+    else:
+        raise ValueError("epochs should either be an iterable or an integer!")
+    assert sum(data['epoch_sizes']) == len(data_raw), "Sum of epoch sizes is not equal to number of observations!"
+    epoch_slices = [slice(start,stop) 
+                    for (start,stop) in zip(np.cumsum([0]+data['epoch_sizes'][:-1]),
+                                            np.cumsum(data['epoch_sizes']))]
+    data['mus_initial'] = [np.mean(data_raw[sl], axis = 0) for sl in epoch_slices]
+    data['sigmas_initial'] = [np.cov(data_raw[sl], rowvar = False) for sl in epoch_slices]
+    return data
