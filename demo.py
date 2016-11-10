@@ -16,4 +16,4 @@ demixer = optimize(data, dim_s = 2, restarts = 20)
 
 np.set_printoptions(suppress = True)
 print(np.round(demixer.dot(mixer),3))
-# A good demixer should have zeroes in the upper-right (dim_n x dim_n) block
+# A perfect demixer should have zeroes in the upper-right (dim_n x dim_n) block of the demixer x mixer matrix product
