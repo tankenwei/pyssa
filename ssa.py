@@ -92,7 +92,7 @@ def optimize_once(data, params, optNSources, loss_translation = 0, init = None):
         t = 1
         for i in range(10): # Line search
             M = t * search
-            loss_new, _, rotation, mus_new, sigmas_new = objective_function(params,mus,sigmas,data['epoch_sizes'],M,k,calculate_gradient = False,loss_translation = loss_translation)
+            loss_new, _, rotation, mus_new, sigmas_new = objective_function(params,mus,sigmas,data['epoch_sizes'],M,k,calculate_grad = False,loss_translation = loss_translation)
             if optNSources:
                 loss_new *= -1
             # Check if objective function has decreased enough
