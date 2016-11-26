@@ -3,7 +3,7 @@ paulbuenau's SSA-Toolbox (written in Java), ported into Python. Original reposit
 
 Libraries required: NumPy, SciPy
 
-Limitations:
+# Limitations:
 
 1. The epoch labels (or at least the number of epochs) must be specified.  
   (The original has the option of using a heuristic to guess the number of epochs, assuming they are equally sized.)
@@ -14,7 +14,7 @@ Limitations:
 3. The returned result is only the estimated mixing matrix.  
   (The original returns the bases, projections, and signals; nevertheless, these can be computed easily once the estimated mixing matrix is known.)
 
-Usage (Example available in demo.py):
+# Usage (Example available in demo.py):
 
 1. Load your data into a numpy array, ordered by their epochs (i.e. the first n1 rows should belong to epoch 1, next n2 to epoch 2, and so on).
 
@@ -22,7 +22,7 @@ Usage (Example available in demo.py):
 
 3. Run the optimize function, using the output from (2) as the first argument, and specify the dimension of the stationary sources for the second argument. The function returns a demixing matrix; right-multiplying the data from (1) by this matrix should yield a transformation of the data where the first s columns (as specified in the second argument of the optimize function) are weakly stationary.
 
-Remarks:
+# Remarks:
 
 1. The main issue with the original Java program is that it can be *very* slow at loading large amounts of data (on the order of seconds for a 10MB .csv), whereas the NumPy/Pandas parser handles this much more quickly.
 
